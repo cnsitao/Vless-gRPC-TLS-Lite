@@ -298,7 +298,7 @@ echo "vless://${id}@${domain}:$port?type=grpc&encryption=none&serviceName=grpc_p
 echo
 echo "clash节点配置:"
 cat /xray/clash-node
-
+echo
 echo "V2rayN链接:"
 cat /xray/v2rayN-node
 echo

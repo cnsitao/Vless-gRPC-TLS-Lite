@@ -97,13 +97,12 @@ cat << EOF > /xray/config.json
         "access": "/xray/access.log"
     }, 
     "inbounds": [
-       {
+    {
         "port": 16969,
         "listen": "127.0.0.1",
         "protocol": "vless",
         "settings": {
-            "clients": [
-            {
+            "clients": [{
                 "id": "${id}"
             }],
             "decryption": "none"
@@ -111,16 +110,17 @@ cat << EOF > /xray/config.json
         "streamSettings": {
             "network": "grpc",
             "grpcSettings": {
-                "serviceName": "vless_grpc"
+                "serviceName": "vless"
             }
         }
-     }
-    ],
+    }],
     "outbounds": [
-     {
-      "protocol": "freedom"
-     }
-  ]
+        {
+            "tag": "direct",
+            "protocol": "freedom",
+            "settings": {}
+        }
+    ]
 }
 EOF
 systemctl start xray.service
@@ -160,6 +160,9 @@ elif [ "$checkweb" -eq "2" ]
   then 
            wget https://raw.githubusercontent.com/LSitao/Trojan-gRPC-tls/main/web/movie.tar.gz
 	     tar -zxvf movie.tar.gz -C /web
+           cd /web/movie
+           mv ./* ..
+           cd
 
 elif [ "$checkweb" -eq "3" ]
   then 
@@ -200,14 +203,15 @@ server {
 server {
     listen 443 ssl http2;
     server_name ${domain};
-   location /vless_grpc {
+   location /vless {
         if (\$content_type !~ "application/grpc") {
                 return 404;
         }
         client_max_body_size 512K;
         client_body_timeout 1071906480m;
         grpc_set_header X-Real-IP \$remote_addr;  # cdn $proxy_add_x_forwarded_for
-        grpc_read_timeout 1071906480m;
+        grpc_read_timeout 2m;
+        grpc_send_timeout 5m;
         grpc_pass grpc://127.0.0.1:16969;
     }
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always; # 启用HSTS
@@ -237,7 +241,7 @@ server {
     server_name ${domain};
     error_page 497 https://\$host:$port\$request_uri;
 	
-    location /vless_grpc {
+    location /vless {
         if (\$content_type !~ "application/grpc") {
                 return 404;
         }

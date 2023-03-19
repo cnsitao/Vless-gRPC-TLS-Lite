@@ -64,7 +64,7 @@ read
 #下载xray内核
 mkdir /xray
 chmod 777 /xray
-https://github.com/XTLS/Xray-core/releases/download/v1.8.0/Xray-linux-64.zip
+wget https://github.com/XTLS/Xray-core/releases/download/v1.8.0/Xray-linux-64.zip
 apt-get install unzip -y
 unzip Xray-linux-64.zip -d /xray
 cp /xray/xray /usr/bin/xray

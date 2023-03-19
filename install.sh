@@ -290,10 +290,10 @@ cat << EOF > /xray/clash-node
     servername: $domain
     # skip-cert-verify: true
     grpc-opts:
-      grpc-service-name: "vless_proxy"
+      grpc-service-name: "vless"
 EOF
 
-echo "vless://${id}@${domain}:$port?type=grpc&encryption=none&serviceName=grpc_proxy&security=tls&sni=${domain}#Node_Vless_gRPC" > /xray/v2rayN-node
+echo "vless://${id}@${domain}:$port?type=grpc&encryption=none&serviceName=vless&security=tls&sni=${domain}#Node_Vless_gRPC" > /xray/v2rayN-node
 
 echo
 echo "clash节点配置:"

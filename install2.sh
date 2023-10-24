@@ -1,10 +1,8 @@
 #!/bin/bash
 
-# author: https://t.me/iu536
-
 clear
 echo "Hello! 欢迎使用Vless+gRPC+TLS脚本"
-echo "作者:https://t.me/iu536"
+echo "有问题联系root@sitao.org"
 echo
 
 read -p "请输入你的域名:" domain
@@ -35,28 +33,6 @@ if [ -z $checkweb ]
  then checkweb=2
 fi
 
-#开bbr
-checkbbr=`lsmod | grep bbr`
-
-if test -z "$checkbbr" 
-  then 
-       echo "检测到你的系统未开启BBR!"
-        echo
-        read -p "是否开启bbr? [y/n] Default 'y':" checkbbragain
-         if checkbbr=='y' || [ -z $checkbbragain ]
-          then
-                echo "net.core.default_qdisc = fq" >> /etc/sysctl.conf
-                echo "net.ipv4.tcp_congestion_control = bbr" >> /etc/sysctl.conf
-                sysctl -p
-                echo "BBR开启成功！"
-                sleep 1   
-         fi
-  
-  else    
-       echo "检测到你的系统已经开启BBR啦！"
-       sleep 1 
-fi
-
 clear
 echo "OK! 一切已准备就绪，按回车键开始安装!"
 read
@@ -64,7 +40,7 @@ read
 #下载xray内核
 mkdir /xray
 chmod 777 /xray
-wget https://github.com/XTLS/Xray-core/releases/download/v1.8.3/Xray-linux-64.zip
+wget https://github.com/XTLS/Xray-core/releases/download/v1.8.4/Xray-linux-64.zip
 apt-get install unzip -y
 unzip Xray-linux-64.zip -d /xray
 cp /xray/xray /usr/bin/xray
@@ -91,11 +67,6 @@ EOF
 
 cat << EOF > /xray/config.json
 {
-    "log": {
-        "loglevel": "warning", 
-        "error": "/xray/error.log", 
-        "access": "/xray/access.log"
-    }, 
     "inbounds": [
     {
         "port": 16969,
@@ -178,9 +149,9 @@ fi
 #安装依赖
 apt install build-essential libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev -y
 #下载Nginx源码
-wget https://nginx.org/download/nginx-1.25.1.tar.gz
-tar -xzvf nginx-1.25.1.tar.gz
-cd nginx-1.25.1
+wget https://nginx.org/download/nginx-1.25.2.tar.gz
+tar -xzvf nginx-1.25.2.tar.gz
+cd nginx-1.25.2
 ./configure \
 --prefix=/usr/local/nginx \
 --user=nginx \

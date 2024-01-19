@@ -40,7 +40,7 @@ read
 #下载xray内核
 mkdir /xray
 chmod 777 /xray
-wget https://github.com/XTLS/Xray-core/releases/download/v1.8.4/Xray-linux-64.zip
+wget https://github.com/XTLS/Xray-core/releases/download/v1.8.6/Xray-linux-64.zip
 apt-get install unzip -y
 unzip Xray-linux-64.zip -d /xray
 cp /xray/xray /usr/bin/xray
@@ -81,7 +81,7 @@ cat << EOF > /xray/config.json
         "streamSettings": {
             "network": "grpc",
             "grpcSettings": {
-                "serviceName": "proxy"
+                "serviceName": "daiyu"
             }
         }
     }],
@@ -149,9 +149,9 @@ fi
 #安装依赖
 apt install build-essential libpcre3 libpcre3-dev zlib1g-dev openssl libssl-dev -y
 #下载Nginx源码
-wget https://nginx.org/download/nginx-1.25.2.tar.gz
-tar -xzvf nginx-1.25.2.tar.gz
-cd nginx-1.25.2
+wget https://nginx.org/download/nginx-1.25.3.tar.gz
+tar -xzvf nginx-1.25.3.tar.gz
+cd nginx-1.25.3
 ./configure \
 --prefix=/usr/local/nginx \
 --user=nginx \
@@ -226,9 +226,10 @@ server {
       }
 }
 server {
-    listen 443 ssl http2;
+    listen 443 ssl;
+    http2 on;
     server_name ${domain};
-   location /proxy {
+   location /daiyu {
         if (\$content_type !~ "application/grpc") {
                 return 404;
         }
